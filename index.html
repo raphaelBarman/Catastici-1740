@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.6.0/mapbox-gl.js'></script>
+    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-4 filter-col">
+                <div class="row p-3">
+                    <div class="input-group mb-3">
+                        <input id='filter-owner-name-input' class="form-control" type='text' name='filter' placeholder='Filter by owner name' />
+                    </div>
+                    <div class="input-group mb-3">
+                        <input id='filter-tenant-name-input' class="form-control" type='text' name='filter' placeholder='Filter by tenant name' />
+                    </div>
+                    <fieldset class="form-group">
+                        <div class="row">
+                            <legend class="col-form-label col-sm-4 pt-0">Category</legend>
+                            <div class="col-sm-8">
+                                <div class="row">
+                                    <div class="col-sm-6 categories">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios1" value="all" checked>
+                                            <label class="form-check-label" for="categoryRadios1">
+                                                All
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios2" value="housing" checked>
+                                            <label class="form-check-label" for="categoryRadios2">
+                                                Housing
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios3" value="shop" checked>
+                                            <label class="form-check-label" for="categoryRadios3">
+                                                Shop
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios4" value="storage" checked>
+                                            <label class="form-check-label" for="categoryRadios4">
+                                                Storage
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 categories">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios5" value="palace" checked>
+                                            <label class="form-check-label" for="categoryRadios5">
+                                                Palace
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios6" value="religious" checked>
+                                            <label class="form-check-label" for="categoryRadios6">
+                                                Religious
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios7" value="politic" checked>
+                                            <label class="form-check-label" for="categoryRadios7">
+                                                Politic
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="form-row mb">
+                        <div class="col-6">
+                            <input type="text" id="min-rent-input" class="form-control" placeholder="Min rent">
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="max-rent-input" class="form-control" placeholder="Max rent">
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="overflow-auto row h-50">
+                    <div class="results">
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 p-0">
+                <div id='map'></div>
+            </div>
+        </div>
+    </div>
+    <script src="map.js"></script>
+</body>
+
+</html>

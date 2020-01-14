@@ -1,0 +1,44 @@
+:root {
+    --background: snow;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    height: 100%;
+}
+/*#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.filter-ctrl {
+    position: absolute;
+    top: 2.5%;
+    left: 2%;
+    z-index: 1;
+    width: 30%;
+    min-width: 200px;
+    max-width: 500px;
+    background-color: var(--background);
+    border-radius: 5px;
+}*/
+
+input, .card, .card-body, .filter-col {
+    background-color: var(--background) !important;
+}
+
+.results {
+    max-height: 60vh;
+    /*overflow-y:auto;*/
+}
+
+.categories {
+    max-width: inherit;
+}
