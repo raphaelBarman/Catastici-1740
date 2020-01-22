@@ -11,6 +11,15 @@ html, body {
 #map {
     height: 100%;
 }
+
+.h-40 {
+    /*height: 40% !important;*/
+}
+
+.h-60 {
+    /*height: 60% !important;*/
+}
+
 /*#map {
     position: absolute;
     top: 0;
@@ -30,12 +39,23 @@ html, body {
     border-radius: 5px;
 }*/
 
-input, .card, .card-body, .filter-col {
+.min-80 {
+    min-width: 80px;
+}
+
+.filter-col {
+    display: flex;
+    flex-flow: column;
+    max-width: 500px;
+}
+
+input, .card, .card-body, .filter-col, .list-group-item {
     background-color: var(--background) !important;
 }
 
 .results {
-    max-height: 60vh;
+    width: 100%;
+    /*max-height: 60vh;*/
     /*overflow-y:auto;*/
 }
 

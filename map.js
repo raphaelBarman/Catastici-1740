@@ -7,6 +7,8 @@ var map = new mapboxgl.Map({
     style: 'mapbox://styles/raphaelbarman/ck3iirjgp1heq1coajdyt1ue7'
 });
 
+map.addControl(new mapboxgl.NavigationControl());
+
 function normalize(string) {
     return string.toLowerCase().trim();
 }
@@ -81,7 +83,7 @@ map.on('load', function() {
         url: "mapbox://raphaelbarman.ck3ihdp1i25xa2umtmt15sgjy-33yp7",
     });
 
-    fetch("catastici_1740_davide_categories_epsg4326.geojson").then(res => res.json()).then(function(data) {
+    fetch("catastici_1740_all_categories.geojson").then(res => res.json()).then(function(data) {
 
         function createCards(features){
             var results = $('.results')[0];
