@@ -17,127 +17,128 @@
 
 <body>
     <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="col-4 filter-col h-100">
-                <div class="row p-3 h-40">
-                    <div class="input-group mb-3">
-                        <input id='filter-owner-name-input' class="form-control" type='text' name='filter' placeholder='Filter by owner name' />
-                    </div>
-                    <div class="input-group mb-3">
-                        <input id='filter-tenant-name-input' class="form-control" type='text' name='filter' placeholder='Filter by tenant name' />
-                    </div>
-                    <fieldset class="form-group">
-                        <div class="row">
-                            <legend class="col-form-label col-sm-2 pt-0 min-80">Category</legend>
-                            <div class="col-sm">
-                                <div class="row">
-                                    <div class="col-sm categories">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios1" value="all" checked>
-                                            <label class="form-check-label" for="categoryRadios1">
-                                                All
-                                            </label>
+        <div class="col-sm h-100">
+            <div class="row h-65">
+                <div class="col-4 filter-col h-100">
+                    <div class="row p-3">
+                        <div class="input-group mb-3">
+                            <input id='filter-owner-name-input' class="form-control" type='text' name='filter' placeholder='Filter by owner name' />
+                        </div>
+                        <div class="input-group mb-3">
+                            <input id='filter-tenant-name-input' class="form-control" type='text' name='filter' placeholder='Filter by tenant name' />
+                        </div>
+                        <fieldset class="form-group">
+                            <div class="row">
+                                <legend class="col-form-label col-sm-2 pt-0 min-80">Category</legend>
+                                <div class="col-sm">
+                                    <div class="row">
+                                        <div class="col-sm categories">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios1" value="all" checked>
+                                                <label class="form-check-label" for="categoryRadios1">
+                                                    All
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios2" value="housing" checked>
+                                                <label class="form-check-label" for="categoryRadios2">
+                                                    Housing
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios3" value="shop" checked>
+                                                <label class="form-check-label" for="categoryRadios3">
+                                                    Shop
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios4" value="storage" checked>
+                                                <label class="form-check-label" for="categoryRadios4">
+                                                    Storage
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios2" value="housing" checked>
-                                            <label class="form-check-label" for="categoryRadios2">
-                                                Housing
-                                            </label>
+                                        <div class="col-sm categories">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios5" value="administration" checked>
+                                                <label class="form-check-label" for="categoryRadios5">
+                                                    Administration
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios6" value="religious" checked>
+                                                <label class="form-check-label" for="categoryRadios6">
+                                                    Religious
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios7" value="hospitality" checked>
+                                                <label class="form-check-label" for="categoryRadios7">
+                                                    Hospitality
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios8" value="guild" checked>
+                                                <label class="form-check-label" for="categoryRadios8">
+                                                    Guild
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios3" value="shop" checked>
-                                            <label class="form-check-label" for="categoryRadios3">
-                                                Shop
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios4" value="storage" checked>
-                                            <label class="form-check-label" for="categoryRadios4">
-                                                Storage
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm categories">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios5" value="administration" checked>
-                                            <label class="form-check-label" for="categoryRadios5">
-                                                Administration
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios6" value="religious" checked>
-                                            <label class="form-check-label" for="categoryRadios6">
-                                                Religious
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios7" value="hospitality" checked>
-                                            <label class="form-check-label" for="categoryRadios7">
-                                                Hospitality
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios8" value="guild" checked>
-                                            <label class="form-check-label" for="categoryRadios8">
-                                                Guild
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm categories">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios9" value="healthcare" checked>
-                                            <label class="form-check-label" for="categoryRadios9">
-                                                Healthcare
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios10" value="palace" checked>
-                                            <label class="form-check-label" for="categoryRadios10">
-                                                Palace
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios11" value="entertainment" checked>
-                                            <label class="form-check-label" for="categoryRadios11">
-                                                Entertainment
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios12" value="transport" checked>
-                                            <label class="form-check-label" for="categoryRadios12">
-                                                Transport
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios13" value="garden" checked>
-                                            <label class="form-check-label" for="categoryRadios13">
-                                                Garden
-                                            </label>
-                                        </div>
+                                        <div class="col-sm categories">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios9" value="healthcare" checked>
+                                                <label class="form-check-label" for="categoryRadios9">
+                                                    Healthcare
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios10" value="palace" checked>
+                                                <label class="form-check-label" for="categoryRadios10">
+                                                    Palace
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios11" value="entertainment" checked>
+                                                <label class="form-check-label" for="categoryRadios11">
+                                                    Entertainment
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios12" value="transport" checked>
+                                                <label class="form-check-label" for="categoryRadios12">
+                                                    Transport
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios13" value="garden" checked>
+                                                <label class="form-check-label" for="categoryRadios13">
+                                                    Garden
+                                                </label>
+                                            </div>
 
+                                        </div>
                                     </div>
+
                                 </div>
-
+                            </div>
+                        </fieldset>
+                        <div class="form-row mb">
+                            <div class="col-6">
+                                <input type="text" id="min-rent-input" class="form-control" placeholder="Min rent">
+                            </div>
+                            <div class="col-6">
+                                <input type="text" id="max-rent-input" class="form-control" placeholder="Max rent">
                             </div>
                         </div>
-                    </fieldset>
-                    <div class="form-row mb">
-                        <div class="col-6">
-                            <input type="text" id="min-rent-input" class="form-control" placeholder="Min rent">
-                        </div>
-                        <div class="col-6">
-                            <input type="text" id="max-rent-input" class="form-control" placeholder="Max rent">
-                        </div>
                     </div>
                 </div>
-                <hr />
-                <div class="overflow-auto row h-60">
-                    <div class="results">
-                    </div>
+                <div class="col p-0">
+                    <div id='map'></div>
                 </div>
             </div>
-            <div class="col p-0">
-                <div id='map'></div>
+            <div class="row h-35" id="results-parent">
+                <div class="overflow-auto row flex-nowrap p-3" id="results">
+                </div>
             </div>
         </div>
     </div>

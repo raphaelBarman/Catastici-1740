@@ -31,8 +31,10 @@ function delay(fn, ms) {
 
 function featureToCard(feature) {
     var properties = feature.properties;
+    var row = document.createElement("div");
+    row.className = "col-sm-3";
     var card = document.createElement("div");
-    card.className = 'card';
+    card.className = 'card h-100';
     card.id = "card-" + properties.idx;
     var cardBody = document.createElement("div");
     cardBody.className = 'card-body';
@@ -73,9 +75,12 @@ function featureToCard(feature) {
     cardBody.appendChild(listInfo);
 
     card.appendChild(cardBody);
-    return card;
+    row.appendChild(card);
+    return row;
 }
 
+
+var num_cards = 8;
 
 map.on('load', function() {
     map.addSource('catastici_vec', {
@@ -85,12 +90,22 @@ map.on('load', function() {
 
     fetch("catastici_1740_all_categories.geojson").then(res => res.json()).then(function(data) {
 
-        function createCards(features){
-            var results = $('.results')[0];
-            results.innerHTML = "";
+        var current_offset = 0;
+        var features = [];
+        var results_div = $("#results")[0];
+
+        function update_features(new_features){
+            features = new_features;
+
+            addCards(features.slice(0, num_cards*2));
+            results_div.scrollTo(0,0);
+        }
+
+        function addCards(features){
+            results_div.innerHTML = "";
             features.forEach(function(feature) {
                 var card = featureToCard(feature);
-                results.appendChild(card);
+                results_div.appendChild(card);
             });
 
             $(".card").click(function (e) {
@@ -101,7 +116,29 @@ map.on('load', function() {
                     map.easeTo({center: features[0].geometry.coordinates, zoom: 20});
                 }
             });
+            
         }
+
+        results_div.addEventListener('scroll', function() {
+            var new_offset = 0;
+            var maxOffset = Math.floor(features.length / num_cards);
+            if (results_div.scrollLeft + results_div.clientWidth >= results_div.scrollWidth) {
+                new_offset = Math.min(current_offset+1, maxOffset);
+                if (new_offset != current_offset) {
+                    current_offset = new_offset;
+                    addCards(features.slice((current_offset)*num_cards, (current_offset+2)*num_cards));
+                    results_div.scrollTo(Math.floor(results_div.scrollLeftMax/2)-Math.floor(results_div.clientWidth/4*2),0);
+                }
+            } else if (results_div.scrollLeft <= 0) {
+                new_offset = Math.max(current_offset-1, 0);
+                if (new_offset != current_offset) {
+                    current_offset = new_offset;
+                    addCards(features.slice((current_offset)*num_cards, (current_offset+2)*num_cards));
+                    results_div.scrollTo(Math.floor(results_div.scrollLeftMax/2)+Math.floor(results_div.clientWidth/4*2),0);
+                }
+
+            }
+        });
 
         map.addSource('catastici', {
             type: "geojson",
@@ -227,7 +264,7 @@ map.on('load', function() {
             var clusterId = nearestFeature.properties.cluster_id;
 
             map.getSource('catastici').getClusterLeaves(clusterId, 10000, 0, function(error, features) {
-                createCards(features);
+                update_features(features);
             });
 
         }, DEFAULT_DELAY));
@@ -242,7 +279,7 @@ map.on('load', function() {
                 layers: ['unclustered-point']
             });
 
-            createCards(features);
+            update_features(features);
 
         }));
 
@@ -285,7 +322,7 @@ map.on('load', function() {
 
             map.getSource('catastici').setData(filteredData);
 
-            createCards(filteredFeatures);
+            update_features(filteredFeatures);
         }
 
         $("input[name=categoryRadios]").change(function() {
