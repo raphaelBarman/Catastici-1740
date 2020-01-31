@@ -49,9 +49,11 @@ html, body {
     max-width: 500px;
 }
 
-input, .card, .card-body, .filter-col, .list-group-item {
+select, option, input, .card, .card-body, .filter-col, .list-group-item {
     background-color: var(--background) !important;
 }
+
+
 
 /*.card {
     height: 25vh;
@@ -66,4 +68,15 @@ input, .card, .card-body, .filter-col, .list-group-item {
 
 .categories {
     max-width: inherit;
+}
+
+
+.disable-scrollbars::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+}
+
+.disable-scrollbars {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
 }

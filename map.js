@@ -13,6 +13,45 @@ function normalize(string) {
     return string.toLowerCase().trim();
 }
 
+function queryToPrefix(query, prefix) {
+    var tokens = lunr.tokenizer(query).map(token => prefix + ":" + token);
+    return tokens.join(" ");
+}
+
+function mergeResults(...searchResults) {
+    var orderedResults = searchResults.length === 1 ? searchResults : searchResults.sort((a, b) => a.length-b.length);
+    orderedResults = orderedResults.map(results => results.reduce(function (map, result) {
+        map[result.ref] = result.score;
+        return map;
+    }, {}));
+
+    const shortest = orderedResults[0];
+    const set = new Set();
+    const finalResults = [];
+
+    Object.keys(shortest).forEach(key => {
+        let tmpVal = 0;
+        let every = true;
+        for (let i=1; i < orderedResults.length; ++i){
+            if(orderedResults[i].hasOwnProperty(key)) {
+                tmpVal += orderedResults[i][key];
+                continue;
+            };
+            every = false;
+            break;
+        }
+
+        if(every && !set.has(key)) {
+            set.add(key);
+            tmpVal += shortest[key];
+            finalResults.push([key, tmpVal]);
+        }
+    });
+
+
+    return finalResults.sort((a,b) => a[1]-b[1]).map(res => parseInt(res[0]));
+}
+
 function valOrEmpty(val) {
     if (val === undefined || val === 'NaN') {
         return "";
@@ -22,11 +61,11 @@ function valOrEmpty(val) {
 }
 
 function delay(fn, ms) {
-    let timer = 0
+    let timer = 0;
     return function(...args) {
-        clearTimeout(timer)
-        timer = setTimeout(fn.bind(this, ...args), ms || 0)
-    }
+        clearTimeout(timer);
+        timer = setTimeout(fn.bind(this, ...args), ms || 0);
+    };
 }
 
 function getHeight(elements) {
@@ -58,25 +97,6 @@ function featureToCard(feature) {
     cardText.innerHTML = valOrEmpty(properties.function);
     cardBody.appendChild(cardText);
 
-    //var listInfo = document.createElement('ul');
-    //listInfo.className = 'list-group list-group-flush';
-
-    //var rent = document.createElement('li');
-    //rent.className = 'list-group-item';
-    //rent.innerHTML = valOrEmpty(properties.an_rendi);
-    //if (rent.innerHTML.length !== 0) listInfo.appendChild(rent);
-
-    //var idNapo = document.createElement('li');
-    //idNapo.className = 'list-group-item';
-    //idNapo.innerHTML = valOrEmpty(properties.id_napo);
-    //if (idNapo.innerHTML.length !== 0) listInfo.appendChild(idNapo);
-
-    //var place = document.createElement('li');
-    //place.className = 'list-group-item';
-    //place.innerHTML = valOrEmpty(properties.place);
-    //if (place.innerHTML.length !== 0) listInfo.appendChild(place);
-
-    //cardBody.appendChild(listInfo);
     var place = document.createElement('div');
     place.innerHTML = '<i class="las la-map-marker"></i> ' + valOrEmpty(properties.place);
 
@@ -108,6 +128,13 @@ function featureToCard(feature) {
 
 
 var num_cards = 8;
+var dataGlobal;
+var globalIndex;
+
+var index;
+fetch('search_index.json').then(res => res.json()).then(res => {
+    index = lunr.Index.load(res);
+});
 
 map.on('load', function() {
     map.addSource('catastici_vec', {
@@ -117,10 +144,40 @@ map.on('load', function() {
 
     fetch("catastici_1740_all_categories.geojson").then(res => res.json()).then(function(data) {
 
+        dataGlobal = data;
+        var dataProperties = {};
+
+        data['features'].forEach(function (feature) {
+            dataProperties[feature.properties.idx] = feature;
+        });
+
         var current_offset = 0;
         var features = [];
         var results_div = $(".results")[0];
         var resultsContainer = $("#results-container")[0];
+
+
+        //var index = lunr(function() {
+        //    // Use italian tokenizer
+        //    this.use(lunr.it);
+
+        //    // tweak similarity, c.f. https://lunrjs.com/guides/customising.html#similarity-tuning
+        //    this.k1(1.5); // Make frequent word still count
+        //    this.b(0); // Do not boost based on length of document
+
+        //    // Define the fields
+        //    this.ref('idx');
+        //    this.field('owner_name');
+        //    this.field('ten_name');
+        //    this.field('function');
+        //    this.field('place');
+        //    
+        //    // Add to the index
+        //    data['features'].forEach( function (feature) {
+        //        this.add(feature.properties);
+        //    }, this);
+        //});
+
 
         function updateFeatures(new_features) {
             features = new_features;
@@ -333,16 +390,22 @@ map.on('load', function() {
         });
 
         var filter_props = {
+            'search': '',
             'owner': '',
             'tenant': '',
+            'function': '',
+            'place': '',
             'category': 'all',
             'min_rent': NaN,
             'max_rent': NaN
         };
 
         function filter() {
+            var search = filter_props.search;
             var owner = filter_props.owner;
             var tenant = filter_props.tenant;
+            var function_ = filter_props.function;
+            var place = filter_props.place;
             var category = filter_props.category;
             var min_rent = filter_props.min_rent;
             var max_rent = filter_props.max_rent;
@@ -350,17 +413,49 @@ map.on('load', function() {
             var filteredData = {
                 "type": 'FeatureCollection'
             };
-            var filteredFeatures = data['features'];
+            var filteredFeatures = [];
 
-            filteredFeatures = filteredFeatures.filter(function(feature) {
-                var properties = feature['properties'];
+            var searchResults = [];
 
-                return (owner === '' || normalize(properties['owner_name']).includes(owner)) &&
-                    (tenant === '' || normalize(properties['ten_name']).includes(tenant)) &&
-                    (category === 'all' || properties['categories'].includes(category)) &&
-                    (isNaN(min_rent) || properties['an_rendi'] >= min_rent) &&
-                    (isNaN(max_rent) || properties['an_rendi'] <= max_rent);
+            if (advancedSearchEnabled) {
+                owner = queryToPrefix(owner, 'owner_name');
+                tenant = queryToPrefix(tenant, 'ten_name');
+                function_ = queryToPrefix(function_, 'function');
+                place = queryToPrefix(place, 'place');
+
+                var ownerResults = index.search(owner);
+                var tenantResults = index.search(tenant);
+                var functionResults = index.search(function_);
+                var placeResults = index.search(place);
+
+                searchResults = mergeResults(ownerResults, tenantResults, functionResults, placeResults);
+            } else {
+               searchResults = index.search(search).map(res => parseInt(res.ref));;
+            }
+
+            
+            searchResults.forEach(idx => {
+                var feature = dataProperties[idx];
+                if ((isNaN(min_rent) || feature.properties['an_rendi'] >= min_rent) &&
+                    (isNaN(max_rent) || feature.properties['an_rendi'] <= max_rent) &&
+                    (category === 'all' || feature.properties['categories'].includes(category)))
+                    filteredFeatures.push(feature);
             });
+
+            $("#num-results")[0].innerHTML = (filteredFeatures.length === 0 ? "No results" : filteredFeatures.length + " results");
+ //filteredFeatures = filteredFeatures.filter(function(feature) {
+            //    var properties = feature['properties'];
+
+            //    return (searchResults.includes(properties.idx)) &&
+            //        (isNaN(min_rent) || properties['an_rendi'] >= min_rent) &&
+            //        (isNaN(max_rent) || properties['an_rendi'] <= max_rent);
+
+            //    //return (owner === '' || normalize(properties['owner_name']).includes(owner)) &&
+            //    //    (tenant === '' || normalize(properties['ten_name']).includes(tenant)) &&
+            //    //    (category === 'all' || properties['categories'].includes(category)) &&
+            //    //    (isNaN(min_rent) || properties['an_rendi'] >= min_rent) &&
+            //    //    (isNaN(max_rent) || properties['an_rendi'] <= max_rent);
+            //});
 
 
             filteredData['features'] = filteredFeatures;
@@ -370,19 +465,59 @@ map.on('load', function() {
             updateFeatures(filteredFeatures);
         }
 
-        $("input[name=categoryRadios]").change(function() {
-            var category = this.value;
+        $("#function-categories").change((e) => {
+            var category = e.target.value;
             filter_props.category = category;
             filter();
         });
 
+        $("#search").keyup(delay(function(e) {
+            filter_props.search = e.target.value;
+            filter();
+        }, DEFAULT_DELAY));
+
+        var advancedSearchEnabled = false;
+
+        $("#button-advanced-search").click(() => {
+            advancedSearchEnabled = !advancedSearchEnabled;
+            console.log(advancedSearchEnabled);
+            if (advancedSearchEnabled) {
+                $("#search").attr('disabled', 'disabled');
+                $("#search").val('');
+                filter_props.search = '';
+
+                //$("#filter-owner-name-input").val('');
+                //$("#filter-tenant-name-input").val('');
+                //$("#filter-function-input").val('');
+                //$("#filter-place-input").val('');
+                filter_props.owner = '';
+                filter_props.tenant = '';
+                filter_props.function = '';
+                filter_props.place = '';
+
+            } else {
+                $("#search").removeAttr('disabled');
+            }
+            filter();
+        });
+
         $("#filter-owner-name-input").keyup(delay(function(e) {
-            filter_props.owner = normalize(e.target.value);
+            filter_props.owner = e.target.value;
             filter();
         }, DEFAULT_DELAY));
 
         $("#filter-tenant-name-input").keyup(delay(function(e) {
-            filter_props.tenant = normalize(e.target.value);
+            filter_props.tenant = e.target.value;
+            filter();
+        }, DEFAULT_DELAY));
+
+        $("#filter-function-input").keyup(delay(function(e) {
+            filter_props.function = e.target.value;
+            filter();
+        }, DEFAULT_DELAY));
+
+        $("#filter-place-input").keyup(delay(function(e) {
+            filter_props.place = e.target.value;
             filter();
         }, DEFAULT_DELAY));
 

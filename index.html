@@ -9,6 +9,11 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elasticlunr@0.9.5/elasticlunr.min.js" integrity="sha256-cUqUYjN4U6JfE3pqo/8aqbyS/Y3T0dNljhd+R1wGUYE=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.8/lunr.min.js" integrity="sha256-34Si1Y6llMBKM3G0jQILVeoQKEwuxjbk4zGWXXMT4ps=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lunr-languages@1.4.0/lunr.stemmer.support.js" integrity="sha256-ms+xIarhB4KNxU8Vz3ee9KFRzaqt4Vi+cFom5uluxhg=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lunr-languages@1.4.0/lunr.it.js" integrity="sha256-pZdx24ksoGISiknws/6/nnHcuKYIzEOTLOQm60m4hA0=" crossorigin="anonymous"></script>
 
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.5.0/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -21,107 +26,43 @@
         <div class="row h-100">
             <div class="col-4 filter-col h-100">
                 <div class="row p-3 h-40">
-                    <div class="input-group mb-3">
-                        <input id='filter-owner-name-input' class="form-control" type='text' name='filter' placeholder='Filter by owner name' />
+                    <div class="input-group mb-3 collapse show search-group">
+                        <input id='search' class="form-control" type='text' name='filter' placeholder='Search for...' />
                     </div>
-                    <div class="input-group mb-3">
-                        <input id='filter-tenant-name-input' class="form-control" type='text' name='filter' placeholder='Filter by tenant name' />
-                    </div>
-                    <fieldset class="form-group">
-                        <div class="row">
-                            <legend class="col-form-label col-sm-2 pt-0 min-80">Category</legend>
-                            <div class="col-sm">
-                                <div class="row">
-                                    <div class="col-sm categories">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios1" value="all" checked>
-                                            <label class="form-check-label" for="categoryRadios1">
-                                                All
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios2" value="housing" checked>
-                                            <label class="form-check-label" for="categoryRadios2">
-                                                Housing
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios3" value="shop" checked>
-                                            <label class="form-check-label" for="categoryRadios3">
-                                                Shop
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios4" value="storage" checked>
-                                            <label class="form-check-label" for="categoryRadios4">
-                                                Storage
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm categories">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios5" value="administration" checked>
-                                            <label class="form-check-label" for="categoryRadios5">
-                                                Administration
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios6" value="religious" checked>
-                                            <label class="form-check-label" for="categoryRadios6">
-                                                Religious
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios7" value="hospitality" checked>
-                                            <label class="form-check-label" for="categoryRadios7">
-                                                Hospitality
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios8" value="guild" checked>
-                                            <label class="form-check-label" for="categoryRadios8">
-                                                Guild
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm categories">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios9" value="healthcare" checked>
-                                            <label class="form-check-label" for="categoryRadios9">
-                                                Healthcare
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios10" value="palace" checked>
-                                            <label class="form-check-label" for="categoryRadios10">
-                                                Palace
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios11" value="entertainment" checked>
-                                            <label class="form-check-label" for="categoryRadios11">
-                                                Entertainment
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios12" value="transport" checked>
-                                            <label class="form-check-label" for="categoryRadios12">
-                                                Transport
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="categoryRadios" id="categoryRadios13" value="garden" checked>
-                                            <label class="form-check-label" for="categoryRadios13">
-                                                Garden
-                                            </label>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </div>
+                    <div class="collapse w-100 search-group" id="advanced-search" style="">
+                        <div class="input-group mb-3">
+                            <input id='filter-owner-name-input' class="form-control" type='text' name='filter' placeholder='Filter by owner name' />
                         </div>
-                    </fieldset>
+                        <div class="input-group mb-3">
+                            <input id='filter-tenant-name-input' class="form-control" type='text' name='filter' placeholder='Filter by tenant name' />
+                        </div>
+                        <div class="input-group mb-3">
+                            <input id='filter-function-input' class="form-control" type='text' name='filter' placeholder='Filter by function' />
+                        </div>
+                        <div class="input-group mb-3">
+                            <input id='filter-place-input' class="form-control" type='text' name='filter' placeholder='Filter by place' />
+                        </div>
+
+                    </div>
+                    <div class="float-right ml-auto mb-3">
+                        <button id="button-advanced-search" type="button" data-toggle="collapse" data-target=".search-group" aria-expanded="false" aria-controls="basic-search advanced-search" class="btn btn-light collapsed">Advanced search</button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <select id="function-categories" class="custom-select">
+                            <option selected value="all">All functions</option>
+                            <option value="housing">Housing</option>
+                            <option value="shop">Shop</option>
+                            <option value="storage">Storage</option>
+                            <option value="administration">Administration</option>
+                            <option value="religious">Religious</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="palace">Palace</option>
+                            <option value="entertainment">Entertainement</option>
+                            <option value="transport">Transport</option>
+                            <option value="garden">Garden</option>
+                        </select>
+                    </div>
                     <div class="form-row mb">
                         <div class="col-6">
                             <input type="text" id="min-rent-input" class="form-control" placeholder="Min rent">
@@ -131,8 +72,10 @@
                         </div>
                     </div>
                 </div>
-                <hr />
-                <div class="overflow-auto h-60 row" id="results-container">
+                <div class="row float-right ml-auto px-3">
+                    <p id="num-results"></p>
+                </div>
+                <div class="overflow-auto h-60 row disable-scrollbars" id="results-container">
                     <div class="results">
                     </div>
                 </div>
