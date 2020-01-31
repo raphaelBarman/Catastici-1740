@@ -53,6 +53,11 @@ input, .card, .card-body, .filter-col, .list-group-item {
     background-color: var(--background) !important;
 }
 
+/*.card {
+    height: 25vh;
+    overflow-y: scroll;
+}*/
+
 .results {
     width: 100%;
     /*max-height: 60vh;*/

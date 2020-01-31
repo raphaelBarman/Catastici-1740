@@ -29,6 +29,12 @@ function delay(fn, ms) {
     }
 }
 
+function getHeight(elements) {
+    var height = 0;
+    elements.forEach(element => height += element.getBoundingClientRect().height);
+    return height;
+}
+
 function featureToCard(feature) {
     var properties = feature.properties;
     var card = document.createElement("div");
@@ -37,7 +43,7 @@ function featureToCard(feature) {
     var cardBody = document.createElement("div");
     cardBody.className = 'card-body';
 
-    var cardTitle = document.createElement("h5");
+    var cardTitle = document.createElement("h6");
     cardTitle.className = 'card-title';
     cardTitle.innerHTML = valOrEmpty(properties.owner_name);
     cardBody.appendChild(cardTitle);
@@ -52,30 +58,56 @@ function featureToCard(feature) {
     cardText.innerHTML = valOrEmpty(properties.function);
     cardBody.appendChild(cardText);
 
-    var listInfo = document.createElement('ul');
-    listInfo.className = 'list-group list-group-flush';
+    //var listInfo = document.createElement('ul');
+    //listInfo.className = 'list-group list-group-flush';
 
-    var rent = document.createElement('li');
-    rent.className = 'list-group-item';
-    rent.innerHTML = valOrEmpty(properties.an_rendi);
-    if (rent.innerHTML.length !== 0) listInfo.appendChild(rent);
+    //var rent = document.createElement('li');
+    //rent.className = 'list-group-item';
+    //rent.innerHTML = valOrEmpty(properties.an_rendi);
+    //if (rent.innerHTML.length !== 0) listInfo.appendChild(rent);
 
-    var idNapo = document.createElement('li');
-    idNapo.className = 'list-group-item';
-    idNapo.innerHTML = valOrEmpty(properties.id_napo);
-    if (idNapo.innerHTML.length !== 0) listInfo.appendChild(idNapo);
+    //var idNapo = document.createElement('li');
+    //idNapo.className = 'list-group-item';
+    //idNapo.innerHTML = valOrEmpty(properties.id_napo);
+    //if (idNapo.innerHTML.length !== 0) listInfo.appendChild(idNapo);
 
-    var place = document.createElement('li');
-    place.className = 'list-group-item';
-    place.innerHTML = valOrEmpty(properties.place);
-    if (place.innerHTML.length !== 0) listInfo.appendChild(place);
+    //var place = document.createElement('li');
+    //place.className = 'list-group-item';
+    //place.innerHTML = valOrEmpty(properties.place);
+    //if (place.innerHTML.length !== 0) listInfo.appendChild(place);
 
-    cardBody.appendChild(listInfo);
+    //cardBody.appendChild(listInfo);
+    var place = document.createElement('div');
+    place.innerHTML = '<i class="las la-map-marker"></i> ' + valOrEmpty(properties.place);
+
+    cardBody.appendChild(document.createElement('hr'));
+    cardBody.appendChild(place);
+
+    var rentNapo = document.createElement('div');
+    rentNapo.className = 'row';
+
+    var rent = document.createElement('div');
+    rent.className = 'col text-center';
+    var rentVal = valOrEmpty(properties.an_rendi);
+    if (rentVal.length != 0) rent.innerHTML = '<i class="las la-coins"></i> ' + rentVal;
+    rentNapo.appendChild(rent);
+
+    var idNapo = document.createElement('div');
+    idNapo.className = 'col text-center';
+    var idNapoVal = valOrEmpty(properties.id_napo);
+    if (idNapoVal.length != 0) idNapo.innerHTML = '<i class="las la-map"></i> ' + idNapoVal;
+    rentNapo.appendChild(idNapo);
+
+    cardBody.appendChild(document.createElement('hr'));
+    cardBody.appendChild(rentNapo);
+
 
     card.appendChild(cardBody);
     return card;
 }
 
+
+var num_cards = 8;
 
 map.on('load', function() {
     map.addSource('catastici_vec', {
@@ -84,6 +116,56 @@ map.on('load', function() {
     });
 
     fetch("catastici_1740_all_categories.geojson").then(res => res.json()).then(function(data) {
+
+        var current_offset = 0;
+        var features = [];
+        var results_div = $(".results")[0];
+        var resultsContainer = $("#results-container")[0];
+
+        function updateFeatures(new_features) {
+            features = new_features;
+
+            addCards(features.slice(0, num_cards*2));
+            resultsContainer.scrollTo(0,0);
+        }
+
+        function addCards(features) {
+            results_div.innerHTML = "";
+            features.forEach(function(feature) {
+                var card = featureToCard(feature);
+                results_div.appendChild(card);
+            });
+
+            $(".card").click(function (e) {
+                var featureIdx = parseInt(e.currentTarget.id.split('-')[1]);
+                console.log(featureIdx);
+                var features = data['features'].filter(feature => feature.properties.idx === featureIdx);
+ 	              if (features.length !== 0){
+                    map.easeTo({center: features[0].geometry.coordinates, zoom: 20});
+                }
+            });
+        }
+
+        resultsContainer.addEventListener('scroll', function() {
+            var maxOffset = Math.floor(features.length / num_cards);
+            var new_offset = 0;
+            if (resultsContainer.scrollTop + resultsContainer.clientHeight >= resultsContainer.scrollHeight) {
+                new_offset = Math.min(current_offset+1, maxOffset);
+                if (new_offset != current_offset) {
+                    current_offset = new_offset;
+                    addCards(features.slice((current_offset)*num_cards, (current_offset+2)*num_cards));
+                    resultsContainer.scrollTo(0, resultsContainer.scrollTopMax - getHeight($('.results > ').toArray().slice(8,16)));
+                }
+            } else if (resultsContainer.scrollTop <= 0) {
+                new_offset = Math.max(current_offset-1, 0);
+                if (new_offset != current_offset) {
+                    current_offset = new_offset;
+                    addCards(features.slice((current_offset)*num_cards, (current_offset+2)*num_cards));
+                    resultsContainer.scrollTo(0, getHeight($('.results > :lt(8)').toArray())+2);
+                }
+
+            }
+        });
 
         function createCards(features){
             var results = $('.results')[0];
@@ -227,7 +309,7 @@ map.on('load', function() {
             var clusterId = nearestFeature.properties.cluster_id;
 
             map.getSource('catastici').getClusterLeaves(clusterId, 10000, 0, function(error, features) {
-                createCards(features);
+                updateFeatures(features);
             });
 
         }, DEFAULT_DELAY));
@@ -242,7 +324,7 @@ map.on('load', function() {
                 layers: ['unclustered-point']
             });
 
-            createCards(features);
+            updateFeatures(features);
 
         }));
 
@@ -285,7 +367,7 @@ map.on('load', function() {
 
             map.getSource('catastici').setData(filteredData);
 
-            createCards(filteredFeatures);
+            updateFeatures(filteredFeatures);
         }
 
         $("input[name=categoryRadios]").change(function() {
