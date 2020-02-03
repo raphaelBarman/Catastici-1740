@@ -127,7 +127,7 @@ function featureToCard(feature) {
 }
 
 
-var num_cards = 8;
+var num_cards = 100;
 var dataGlobal;
 var globalIndex;
 
