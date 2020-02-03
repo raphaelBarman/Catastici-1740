@@ -204,21 +204,28 @@ map.on('load', function() {
         }
 
         resultsContainer.addEventListener('scroll', function() {
-            var maxOffset = Math.floor(features.length / num_cards);
+            var maxOffset = Math.floor((features.length-8) / (num_cards*2));
+            var remainder = (features.length-8) % (num_cards*2);
+            var bonus = 0;
             var new_offset = 0;
+            var featuresSlice = [];
             if (resultsContainer.scrollTop + resultsContainer.clientHeight >= resultsContainer.scrollHeight) {
                 new_offset = Math.min(current_offset+1, maxOffset);
                 if (new_offset != current_offset) {
                     current_offset = new_offset;
-                    addCards(features.slice((current_offset)*num_cards, (current_offset+2)*num_cards));
-                    resultsContainer.scrollTo(0, resultsContainer.scrollTopMax - getHeight($('.results > ').toArray().slice(8,16)));
+                    if (new_offset == maxOffset) {
+                        bonus = remainder;
+                    }
+                    featuresSlice = features.slice((current_offset)*num_cards, (current_offset+2)*num_cards+bonus);
+                    addCards(featuresSlice);
+                    resultsContainer.scrollTo(0, resultsContainer.scrollTopMax - getHeight($('.results > ').toArray().slice(featuresSlice.length-num_cards,featuresSlice.length)));
                 }
             } else if (resultsContainer.scrollTop <= 0) {
                 new_offset = Math.max(current_offset-1, 0);
                 if (new_offset != current_offset) {
                     current_offset = new_offset;
                     addCards(features.slice((current_offset)*num_cards, (current_offset+2)*num_cards));
-                    resultsContainer.scrollTo(0, getHeight($('.results > :lt(8)').toArray())+2);
+                    resultsContainer.scrollTo(0, getHeight($('.results > ').slice(0, num_cards).toArray())+2);
                 }
 
             }
